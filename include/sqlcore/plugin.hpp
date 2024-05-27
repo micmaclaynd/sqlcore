@@ -12,6 +12,7 @@ namespace SQLCore {
         SQLC_API_METHOD(SQLCore::Types::String, GetConnector());
         SQLC_API_METHOD(SQLCore::Types::String, GetVersion());
         SQLC_API_METHOD(SQLCore::Types::Path, GetPath());
+        SQLC_API_METHOD(SQLCore::Types::String, GetType());
 	};
 }
 
