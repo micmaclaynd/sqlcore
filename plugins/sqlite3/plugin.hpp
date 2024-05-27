@@ -19,6 +19,7 @@ namespace SQLCore::SQLite3 {
         SQLCore::Types::String GetConnector() noexcept override final;
         SQLCore::Types::String GetVersion() noexcept override final;
         SQLCore::Types::Path GetPath() noexcept override final;
+        SQLCore::Types::String GetType() noexcept override final;
 
         void Release() noexcept override final;
 

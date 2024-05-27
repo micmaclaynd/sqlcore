@@ -41,6 +41,9 @@ namespace SQLCore::MySQL {
     SQLCore::Types::Path Plugin::GetPath() noexcept {
         return std::filesystem::current_path();
     }
+    SQLCore::Types::String Plugin::GetType() noexcept {
+        return "Server";
+    }
     SQLCore::Types::Void Plugin::Release() noexcept {
         delete this;
     }
