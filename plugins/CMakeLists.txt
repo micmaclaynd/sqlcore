@@ -56,7 +56,7 @@ else()
             HINTS ${SQLC_POSTGRESQL_DIR}
             NAMES include)
 
-        set(SQLC_POSTGRESQL_INCLUDE_DIR ${SQLC_POSTGRESQL_INCLUDE_DIR}/include)
+        set(SQLC_POSTGRESQL_INCLUDE_DIR ${SQLC_POSTGRESQL_INCLUDE_DIR})
     endif()
 
     if(SQLC_POSTGRESQL_INCLUDE_DIR)
@@ -114,9 +114,9 @@ else()
     elseif(WIN32)
         find_path(SQLC_MYSQL_INCLUDE_DIR
             HINTS ${SQLC_MYSQL_DIR}
-            NAMES include)
+            NAMES include/mysql)
 
-        set(SQLC_MYSQL_INCLUDE_DIR ${SQLC_MYSQL_INCLUDE_DIR}/include)
+        set(SQLC_MYSQL_INCLUDE_DIR ${SQLC_MYSQL_INCLUDE_DIR}/include/mysql)
     endif()
 
     if(SQLC_MYSQL_INCLUDE_DIR)
