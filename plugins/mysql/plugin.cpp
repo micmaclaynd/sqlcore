@@ -33,10 +33,10 @@ namespace SQLCore::MySQL {
         return "MySQL";
     }
     SQLCore::Types::String Plugin::GetConnector() noexcept {
-        return "MySQL С API";
+        return "MySQL C API";
     }
     SQLCore::Types::String Plugin::GetVersion() noexcept {
-        return "0.0.1";
+        return "0.0.3";
     }
     SQLCore::Types::Path Plugin::GetPath() noexcept {
         return std::filesystem::current_path();
