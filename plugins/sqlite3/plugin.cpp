@@ -19,7 +19,9 @@ namespace SQLCore::SQLite3 {
         start = end + 3, end = _uri.size();
         database = _uri.substr(start, end - start);
 
-        return new SQLCore::SQLite3::Database(database);
+        auto connection = new SQLCore::SQLite3::Database(database);
+        _Factory->AddConnection(connection);
+        return connection;
     }
 
     SQLCore::Types::String Plugin::GetDialect() noexcept {

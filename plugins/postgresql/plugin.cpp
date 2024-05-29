@@ -28,7 +28,9 @@ namespace SQLCore::PostgreSQL {
         start = end + 1, end = _uri.size();
         database = _uri.substr(start, end - start);
 
-        return new SQLCore::PostgreSQL::Database(host, database, user, password);
+        auto connection = new SQLCore::PostgreSQL::Database(host, database, user, password);
+        _Factory->AddConnection(connection);
+        return connection;
     }
 
     SQLCore::Types::String Plugin::GetDialect() noexcept {

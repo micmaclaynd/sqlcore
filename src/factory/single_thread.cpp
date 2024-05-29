@@ -72,6 +72,13 @@ namespace SQLCore {
         }
         return buffer;
     }
+    SQLCore::Types::List<SQLCore::IDatabase*> SingleThreadFactory::GetConnections() noexcept {
+        return _Connections;
+    }
+
+    SQLCore::Types::Void SingleThreadFactory::AddConnection(SQLCore::IDatabase* _database) noexcept {
+        _Connections.push_back(_database);
+    }
     SQLCore::Types::Void SingleThreadFactory::AddPluginsDirectory(SQLCore::Types::Path _directory) noexcept {
         if (_IsPreloadPlugins) {
             #if defined(SQLC_SDK_WINDOWS)
@@ -113,6 +120,10 @@ namespace SQLCore {
         return plugin ? plugin->Connect(_uri) : nullptr;
     }
     SQLCore::Types::Void SingleThreadFactory::Release() noexcept {
+        for (auto connection : _Connections) {
+            connection->Release();
+        }
+
         for (auto plugin : _Plugins) {
             plugin->Release();
         }

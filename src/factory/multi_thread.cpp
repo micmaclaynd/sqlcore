@@ -80,6 +80,15 @@ namespace SQLCore {
         }
         return buffer;
     }
+    SQLCore::Types::List<SQLCore::IDatabase*> MultiThreadFactory::GetConnections() noexcept {
+        std::unique_lock lock(_ConnectionsMutex);
+        return _Connections;
+    }
+
+    SQLCore::Types::Void MultiThreadFactory::AddConnection(SQLCore::IDatabase* _database) noexcept {
+        std::unique_lock lock(_ConnectionsMutex);
+        _Connections.push_back(_database);
+    }
     SQLCore::Types::Void MultiThreadFactory::AddPluginsDirectory(SQLCore::Types::Path _directory) noexcept {
         if (_IsPreloadPlugins) {
             #if defined(SQLC_SDK_WINDOWS)
@@ -122,6 +131,13 @@ namespace SQLCore {
         return plugin ? plugin->Connect(_uri) : nullptr;
     }
     SQLCore::Types::Void MultiThreadFactory::Release() noexcept {
+        {
+            std::unique_lock lock(_ConnectionsMutex);
+            for (auto connection : _Connections) {
+                connection->Release();
+            }
+        }
+
         {
             std::unique_lock lock(_PluginsMutex);
             for (auto& plugin : _Plugins) {

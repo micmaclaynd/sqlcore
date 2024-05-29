@@ -22,7 +22,9 @@ namespace SQLCore {
         SQLCore::Types::Bool LoadPluginFromRelativePath(SQLCore::Types::Path _path) noexcept;
 
         SQLCore::Types::Array<SQLCore::IPlugin*> GetPlugins() noexcept override final;
+        SQLCore::Types::List<SQLCore::IDatabase*> GetConnections() noexcept override final;
 
+        SQLCore::Types::Void AddConnection(SQLCore::IDatabase* _database) noexcept override final;
         SQLCore::Types::Void AddPluginsDirectory(SQLCore::Types::Path _directory) noexcept override final;
         SQLCore::Types::Bool LoadPlugin(SQLCore::Types::Path _path) noexcept override final;
         SQLCore::Types::Void EnablePreloadPlugins() noexcept override final;
@@ -34,6 +36,7 @@ namespace SQLCore {
 
     private:
         SQLCore::Types::Array<SQLCore::Types::Path> _PluginDirectories;
+        SQLCore::Types::List<SQLCore::IDatabase*> _Connections;
         SQLCore::Types::List<SQLCore::SDK::IPlugin*> _Plugins;
         SQLCore::Types::Bool _IsPreloadPlugins;
 

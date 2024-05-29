@@ -17,6 +17,8 @@ namespace SQLCore {
 
     SQLC_API_INTERFACE(IFactory, SQLCore::IUnknown) {
         SQLC_API_METHOD(SQLCore::Types::Array<SQLCore::IPlugin*>, GetPlugins());
+        SQLC_API_METHOD(SQLCore::Types::List<SQLCore::IDatabase*>, GetConnections());
+        SQLC_API_METHOD(SQLCore::Types::Void, AddConnection(SQLCore::IDatabase* _database));
         SQLC_API_METHOD(SQLCore::Types::Void, AddPluginsDirectory(SQLCore::Types::Path _directory));
         SQLC_API_METHOD(SQLCore::Types::Bool, LoadPlugin(SQLCore::Types::Path _path));
         SQLC_API_METHOD(SQLCore::Types::Void, EnablePreloadPlugins());
