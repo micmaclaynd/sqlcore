@@ -14,15 +14,15 @@ namespace SQLCore {
     SingleThreadFactory::SingleThreadFactory() noexcept {
         _Logger = SQLCore::GetLogger();
         _IsPreloadPlugins = false;
-        _PluginDirectories.push_back(std::filesystem::current_path());
     }
-    SQLCore::SDK::IPlugin* SingleThreadFactory::GetPlugin(SQLCore::Types::String _driver) noexcept {
+    SQLCore::SDK::IPlugin* SingleThreadFactory::GetPlugin(SQLCore::Types::String _dialect) noexcept {
         for (auto& plugin : _Plugins) {
-            auto driver = plugin->GetDialect();
-            std::transform(driver.begin(), driver.end(), driver.begin(), [] (char _symbol) {
+            auto dialect = plugin->GetDialect();
+            auto lower_dialect = plugin->GetDialect();
+            std::transform(lower_dialect.begin(), lower_dialect.end(), lower_dialect.begin(), [](char _symbol) {
                 return std::tolower(_symbol);
             });
-            if (driver == _driver) {
+            if (_dialect == dialect || _dialect == lower_dialect) {
                 return plugin;
             }
         }
