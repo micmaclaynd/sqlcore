@@ -12,6 +12,7 @@ namespace SQLCore::MySQL {
     class QueryResult : public SQLCore::IQueryResult {
     public:
         explicit QueryResult(MYSQL_RES* _result) noexcept;
+        explicit QueryResult(SQLCore::Types::String _error) noexcept;
 
         SQLCore::Types::UInt32 GetColumnCount() noexcept override final;
         SQLCore::Types::UInt32 GetRowCount() noexcept override final;
@@ -20,15 +21,19 @@ namespace SQLCore::MySQL {
 
         SQLCore::Types::String GetValue(SQLCore::Types::UInt32 _row, SQLCore::Types::UInt32 _column) noexcept override final;
 
+        SQLCore::Types::Bool IsSuccess() noexcept override final;
+        SQLCore::Types::String GetError() noexcept override final;
+
         SQLCore::Types::Void Release() noexcept override final;
 
     private:
-        SQLCore::ILogger* _Logger;
-
         MYSQL_RES* _Result;
 
         SQLCore::Types::UInt32 _ColumnCount;
         SQLCore::Types::UInt32 _RowCount;
+
+        SQLCore::Types::Bool _IsSuccess;
+        SQLCore::Types::String _Error;
     };
 }
 

@@ -14,6 +14,9 @@ namespace SQLCore {
         SQLC_API_METHOD( SQLCore::Types::String, GetColumnLabel(SQLCore::Types::UInt32 _index));
 
         SQLC_API_METHOD(SQLCore::Types::String, GetValue(SQLCore::Types::UInt32 _row, SQLCore::Types::UInt32 _column));
+
+        SQLC_API_METHOD(SQLCore::Types::Bool, IsSuccess());
+        SQLC_API_METHOD(SQLCore::Types::String, GetError());
     };
 }
 

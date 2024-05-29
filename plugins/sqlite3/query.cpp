@@ -6,12 +6,21 @@
 namespace SQLCore::SQLite3 {
     QueryResult::QueryResult(sqlite3_stmt* _result) noexcept {
         _Result = _result;
+        _IsSuccess = true;
 
         _RowCount = 0;
         _ColumnCount = sqlite3_column_count(_Result);
         while (::sqlite3_step(_Result) == SQLITE_ROW) {
             _RowCount++;
         }
+    }
+    QueryResult::QueryResult(SQLCore::Types::String _error) noexcept {
+        _Result = nullptr;
+        _IsSuccess = false;
+        _Error = _error;
+
+        _RowCount = 0;
+        _ColumnCount = 0;
     }
     SQLCore::Types::UInt32 QueryResult::GetColumnCount() noexcept {
         return _ColumnCount;
@@ -31,6 +40,12 @@ namespace SQLCore::SQLite3 {
         }
         auto value = reinterpret_cast<const char*>(::sqlite3_column_text(_Result, _column));
         return SQLCore::Types::String(value ? value : "NULL");
+    }
+    SQLCore::Types::Bool QueryResult::IsSuccess() noexcept {
+        return _IsSuccess;
+    }
+    SQLCore::Types::String QueryResult::GetError() noexcept {
+        return _Error;
     }
     SQLCore::Types::Void QueryResult::Release() noexcept {
         if (_Result) {

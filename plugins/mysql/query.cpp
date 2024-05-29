@@ -7,11 +7,19 @@
 
 namespace SQLCore::MySQL {
     QueryResult::QueryResult(MYSQL_RES* _result) noexcept {
-        _Logger = SQLCore::GetLogger();
         _Result = _result;
+        _IsSuccess = true;
 
         _RowCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_rows(_Result));
         _ColumnCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_fields(_Result));
+    }
+    QueryResult::QueryResult(SQLCore::Types::String _error) noexcept {
+        _Result = nullptr;
+        _IsSuccess = false;
+        _Error = _error;
+
+        _RowCount = 0;
+        _ColumnCount = 0;
     }
     SQLCore::Types::UInt32 QueryResult::GetColumnCount() noexcept {
         return _ColumnCount;
@@ -26,6 +34,12 @@ namespace SQLCore::MySQL {
         ::mysql_data_seek(_Result, _row);
         auto field = ::mysql_fetch_row(_Result)[_column];
         return SQLCore::Types::String(field ? field : "NULL");
+    }
+    SQLCore::Types::Bool QueryResult::IsSuccess() noexcept {
+        return _IsSuccess;
+    }
+    SQLCore::Types::String QueryResult::GetError() noexcept {
+        return _Error;
     }
     SQLCore::Types::Void QueryResult::Release() noexcept {
         if (_Result) {

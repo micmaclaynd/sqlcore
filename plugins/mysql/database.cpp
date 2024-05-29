@@ -58,10 +58,15 @@ namespace SQLCore::MySQL {
 
         if (::mysql_query(_Connection, _sqlQuery.c_str())) {
             _Logger->Error(::mysql_error(_Connection));
-            return nullptr;
+            return reinterpret_cast<SQLCore::IQueryResult*>(new SQLCore::MySQL::QueryResult(::mysql_error(_Connection)));
         }
 
         MYSQL_RES* result = ::mysql_store_result(_Connection);
+
+        if (!result && ::mysql_errno(_Connection)) {
+            _Logger->Error(::mysql_error(_Connection));
+            return reinterpret_cast<SQLCore::IQueryResult*>(new SQLCore::MySQL::QueryResult(::mysql_error(_Connection)));
+        }
 
         return reinterpret_cast<SQLCore::IQueryResult*>(new SQLCore::MySQL::QueryResult(result));
     }

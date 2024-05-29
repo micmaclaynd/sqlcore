@@ -41,7 +41,7 @@ namespace SQLCore::PostgreSQL {
         if (::PQresultStatus(result) != PGRES_TUPLES_OK) {
             _Logger->Error(std::format("Failed execute query: {}, reason: {}", _sqlQuery, ::PQresultErrorMessage(result)));
             ::PQclear(result);
-            return nullptr;
+            return reinterpret_cast<SQLCore::IQueryResult*>(new SQLCore::PostgreSQL::QueryResult(::PQresultErrorMessage(result)));
         }
 
         return reinterpret_cast<SQLCore::IQueryResult*>(new SQLCore::PostgreSQL::QueryResult(result));
