@@ -10,8 +10,13 @@ namespace SQLCore::MySQL {
         _Result = _result;
         _IsSuccess = true;
 
-        _RowCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_rows(_Result));
-        _ColumnCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_fields(_Result));
+        if (_Result) {
+            _RowCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_rows(_Result));
+            _ColumnCount = static_cast<SQLCore::Types::UInt32>(::mysql_num_fields(_Result));
+        } else {
+            _RowCount = 0;
+            _ColumnCount = 0;
+        }
     }
     QueryResult::QueryResult(SQLCore::Types::String _error) noexcept {
         _Result = nullptr;

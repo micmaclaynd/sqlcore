@@ -19,8 +19,12 @@ namespace SQLCore::MySQL {
 
         SQLCore::Types::Bool IsConnect() noexcept override final;
 
-        // SQLCore::Types::String GetCollation() noexcept override final;
-        // SQLCore::Types::String GetEncoding() noexcept override final;
+        SQLCore::Types::String GetCollation() noexcept override final;
+        SQLCore::Types::String GetEncoding() noexcept override final;
+
+        SQLCore::Types::Array<SQLCore::Types::String> GetSchemas() noexcept override final;
+        SQLCore::Types::Array<SQLCore::Types::String> GetTables(SQLCore::Types::String _scheme) noexcept override final;
+        SQLCore::Types::Array<SQLCore::Types::String> GetFields(SQLCore::Types::String _scheme, SQLCore::Types::String _table) noexcept override final;
 
         SQLCore::IQueryResult* ExecuteQuery(SQLCore::Types::String _sqlQuery) noexcept override final;
 

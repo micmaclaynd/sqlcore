@@ -36,19 +36,46 @@ namespace SQLCore::MySQL {
         return _IsConnect;
     }
 
-    // SQLCore::Types::String Database::GetCollation() noexcept {
-    //     auto query = this->ExecuteQuery("SHOW VARIABLES LIKE 'collation_database'");
-    //     auto collation = query->GetValue(0, 1);
-    //     query->Release();
-    //     return collation;
-    // }
+    SQLCore::Types::String Database::GetCollation() noexcept {
+        auto query = this->ExecuteQuery("SHOW VARIABLES LIKE 'collation_database'");
+        auto collation = query->GetValue(0, 1);
+        query->Release();
+        return collation;
+    }
+    SQLCore::Types::String Database::GetEncoding() noexcept {
+        auto query = this->ExecuteQuery("SHOW VARIABLES LIKE 'character_set_database'");
+        auto encoding = query->GetValue(0, 1);
+        query->Release();
+        return encoding;
+    }
 
-    // SQLCore::Types::String Database::GetEncoding() noexcept {
-    //     auto query = this->ExecuteQuery("SHOW VARIABLES LIKE 'character_set_database'");
-    //     auto encoding = query->GetValue(0, 1);
-    //     query->Release();
-    //     return encoding;
-    // }
+    SQLCore::Types::Array<SQLCore::Types::String> SQLCore::MySQL::Database::GetSchemas() noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> schemas;
+        auto query = this->ExecuteQuery("SHOW DATABASES WHERE `Database` NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')");
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            schemas.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return schemas;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> SQLCore::MySQL::Database::GetTables(SQLCore::Types::String _scheme) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> tables;
+        auto query = this->ExecuteQuery(std::format("SHOW TABLES FROM {}", _scheme));
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            tables.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return tables;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> SQLCore::MySQL::Database::GetFields(SQLCore::Types::String _scheme, SQLCore::Types::String _table) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> fileds;
+        auto query = this->ExecuteQuery(std::format("SHOW COLUMNS FROM {}.{}", _scheme, _table));
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            fileds.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return fileds;
+    }
 
     SQLCore::IQueryResult* Database::ExecuteQuery(SQLCore::Types::String _sqlQuery) noexcept {
         if (!_IsConnect) {

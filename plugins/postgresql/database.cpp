@@ -30,6 +30,48 @@ namespace SQLCore::PostgreSQL {
     SQLCore::Types::Bool Database::IsConnect() noexcept {
         return _IsConnect;
     }
+
+    SQLCore::Types::String Database::GetCollation() noexcept {
+        auto query = this->ExecuteQuery("SELECT datcollate FROM pg_database WHERE datname = current_database()");
+        auto collation = query->GetValue(0, 0);
+        query->Release();
+        return collation;
+    }
+    SQLCore::Types::String Database::GetEncoding() noexcept {
+        auto query = this->ExecuteQuery("SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = current_database()");
+        auto encoding = query->GetValue(0, 0);
+        query->Release();
+        return encoding;
+    }
+
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetSchemas() noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> schemas;
+        auto query = this->ExecuteQuery("SELECT datname FROM pg_database WHERE datistemplate = false");
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            schemas.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return schemas;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetTables(SQLCore::Types::String _scheme) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> tables;
+        auto query = this->ExecuteQuery(std::format("SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'", _scheme));
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            tables.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return tables;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetFields(SQLCore::Types::String _scheme, SQLCore::Types::String _table) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> fields;
+        auto query = this->ExecuteQuery(std::format("SELECT column_name FROM information_schema.columns WHERE table_schema = '{}' AND table_name = '{}'", _scheme, _table));
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            fields.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return fields;
+    }
+
     SQLCore::IQueryResult* Database::ExecuteQuery(SQLCore::Types::String _sqlQuery) noexcept {
         if (!_IsConnect) {
             _Logger->Error(std::format("Not connected to {}", _Host));

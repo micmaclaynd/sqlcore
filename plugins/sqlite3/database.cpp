@@ -26,6 +26,43 @@ namespace SQLCore::SQLite3 {
     bool Database::IsConnect() noexcept {
         return _IsConnect;
     }
+
+    SQLCore::Types::String Database::GetCollation() noexcept {
+        auto query = this->ExecuteQuery("PRAGMA encoding");
+        auto collation = query->GetValue(0, 0);
+        query->Release();
+        return collation;
+    }
+    SQLCore::Types::String Database::GetEncoding() noexcept {
+        auto query = this->ExecuteQuery("PRAGMA encoding");
+        auto encoding = query->GetValue(0, 0);
+        query->Release();
+        return encoding;
+    }
+
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetSchemas() noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> schemas = { "scheme" };
+        return schemas;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetTables(SQLCore::Types::String _scheme) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> tables;
+        auto query = this->ExecuteQuery("SELECT name FROM sqlite_master WHERE type='table'");
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            tables.push_back(query->GetValue(row, 0));
+        }
+        query->Release();
+        return tables;
+    }
+    SQLCore::Types::Array<SQLCore::Types::String> Database::GetFields(SQLCore::Types::String _scheme, SQLCore::Types::String _table) noexcept {
+        SQLCore::Types::Array<SQLCore::Types::String> fields;
+        auto query = this->ExecuteQuery(std::format("PRAGMA table_info('{}')", _table));
+        for (SQLCore::Types::UInt32 row = 0; row < query->GetRowCount(); row++) {
+            fields.push_back(query->GetValue(row, 1));
+        }
+        query->Release();
+        return fields;
+    }
+
     SQLCore::IQueryResult* Database::ExecuteQuery(std::string _sqlQuery) noexcept {
         if (!_IsConnect) {
             _Logger->Error(std::format("Not opened {}", _DbName));

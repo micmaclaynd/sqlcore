@@ -8,10 +8,15 @@ namespace SQLCore::SQLite3 {
         _Result = _result;
         _IsSuccess = true;
 
-        _RowCount = 0;
-        _ColumnCount = sqlite3_column_count(_Result);
-        while (::sqlite3_step(_Result) == SQLITE_ROW) {
-            _RowCount++;
+        if (_Result) {
+            _RowCount = 0;
+            _ColumnCount = sqlite3_column_count(_Result);
+            while (::sqlite3_step(_Result) == SQLITE_ROW) {
+                _RowCount++;
+            }
+        } else {
+            _RowCount = 0;
+            _ColumnCount = 0;
         }
     }
     QueryResult::QueryResult(SQLCore::Types::String _error) noexcept {

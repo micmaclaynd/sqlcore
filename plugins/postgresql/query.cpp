@@ -8,8 +8,13 @@ namespace SQLCore::PostgreSQL {
         _Result = _result;
         _IsSuccess = true;
 
-        _ColumnCount = ::PQnfields(_Result);
-        _RowCount = ::PQntuples(_Result);
+        if (_Result) {
+            _ColumnCount = ::PQnfields(_Result);
+            _RowCount = ::PQntuples(_Result);
+        } else {
+            _ColumnCount = 0;
+            _RowCount = 0;
+        }
     }
     QueryResult::QueryResult(SQLCore::Types::String _error) noexcept {
         _Result = nullptr;
